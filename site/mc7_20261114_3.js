@@ -138,3 +138,20 @@ G.to(__P('.cg .next'),{scale:1.06,repeat:-1,yoyo:true,duration:.6,ease:'sine.inO
 const tb=$('.telb');if(tb){const n=tb.lastChild;if(n&&n.nodeType===3){const sp=document.createElement('span');sp.style.display='inline-block';[...n.textContent].forEach(ch=>{const c=document.createElement('span');c.textContent=ch;c.style.display='inline-block';sp.appendChild(c)});n.replaceWith(sp);G.from(sp.children,{y:i=>i%2?-60:60,opacity:0,stagger:.05,duration:.6,ease:'back.out(2)',scrollTrigger:{trigger:tb,start:'top 90%',...TA}})}}
 addEventListener('load',()=>ST.refresh());
 })();
+
+
+(function(){var vs=document.querySelectorAll('#reels video');
+function play(v){var p=v.play();if(p&&p.catch)p.catch(function(){})}
+if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){if(e.target.preload==='none'){e.target.preload='auto'}play(e.target)}else{e.target.pause()}})},{threshold:.25});vs.forEach(function(v){io.observe(v)})}else{vs.forEach(play)}
+document.querySelectorAll('#reels .mr-snd').forEach(function(b){b.addEventListener('click',function(){var v=b.parentNode.querySelector('video');v.muted=!v.muted;b.textContent=v.muted?'🔇':'🔊';b.setAttribute('aria-label',v.muted?'소리 켜기':'소리 끄기');play(v)})});
+})();
+
+
+(function(){var tr=document.querySelector('#photos .ms-tr');if(!tr)return;var N=tr.children.length,hold=0;
+[].slice.call(tr.children).forEach(function(c){var k=c.cloneNode(true);k.setAttribute('aria-hidden','true');tr.appendChild(k)});
+function P(){var a=tr.children[0],b=tr.children[N];return(a&&b)?b.offsetLeft-a.offsetLeft:tr.scrollWidth/2}
+var pos=0,last=0;function wrap(){var p=P();if(p>0){while(pos>=p)pos-=p;while(pos<0)pos+=p}}
+['pointerdown','touchstart','wheel'].forEach(function(e){tr.addEventListener(e,function(){hold=Date.now()},{passive:true})});
+tr.addEventListener('scroll',function(){if(Date.now()-hold<1500){pos=tr.scrollLeft;wrap()}},{passive:true});
+function loop(t){var dt=last?Math.min(64,t-last):16;last=t;if(Date.now()-hold>1200){pos+=(innerWidth<=760?80:130)*dt/1000;wrap();tr.scrollLeft=pos}requestAnimationFrame(loop)}
+requestAnimationFrame(loop);})();
